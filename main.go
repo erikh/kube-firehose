@@ -103,7 +103,7 @@ func main() {
 		}
 
 		if *wait != 0 {
-			if start.Add(*wait).After(time.Now()) {
+			if start.Add(*wait).Before(time.Now()) {
 				// Probably pointless, but it's probably better to be nice
 				Lock.Lock()
 				for _, cancel := range PodMap {
