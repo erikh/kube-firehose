@@ -24,7 +24,9 @@ var PodMap = map[string]context.CancelFunc{}
 func main() {
 	var kubeconfig *string
 	var tail *bool
+	var since *time.Duration
 	tail = flag.Bool("t", false, "new contents only; no history")
+	since = flag.Duration("since", 0, "show this much time of history; incompatible with -t")
 	if home := homedir.HomeDir(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
@@ -46,6 +48,8 @@ func main() {
 
 	if *tail {
 		logTime = metav1.Now()
+	} else if *since != 0 {
+		logTime = metav1.NewTime(time.Now().Add(-(*since)))
 	}
 
 	for {
