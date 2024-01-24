@@ -2,6 +2,8 @@ A very simple program to yield the stdout logs from all containers running in th
 
 **NOTE** by default **all log history is replayed**. _This is probably not what you want on a long-running cluster!_ Pass the `-t` option to just show current events. You've been warned! :)
 
+You can also pass `-since` with a Golang duration to review items that occurred in that amount of time.
+
 Usage is simple: `kube-firehose`. If you have a configuration you want to use, specify `-kubeconfig`. It uses `~/.kube/config` by default.
 
 License is MIT, Erik Hollensbe <git@hollensbe.org> is the author.
