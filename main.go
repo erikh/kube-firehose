@@ -59,8 +59,10 @@ func main() {
 
 		for _, pod := range pods.Items {
 			Lock.RLock()
-			if _, ok := PodMap[pod.GetName()]; !ok {
-				Lock.RUnlock()
+			_, ok := PodMap[pod.GetName()]
+			Lock.RUnlock()
+
+			if !ok {
 				ctx, cancel := context.WithCancel(context.Background())
 				go func(pod apiv1.Pod, ctx context.Context) {
 					podName := pod.GetName()
@@ -100,8 +102,6 @@ func main() {
 				Lock.Lock()
 				PodMap[pod.GetName()] = cancel
 				Lock.Unlock()
-			} else {
-				Lock.RUnlock()
 			}
 		}
 
