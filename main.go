@@ -95,9 +95,9 @@ func main() {
 			} else {
 				Lock.RUnlock()
 			}
-
-			<-tick
 		}
+
+		<-tick
 	}
 }
 
