@@ -53,8 +53,9 @@ func main() {
 		logTime = metav1.NewTime(time.Now().Add(-(*since)))
 	}
 
+	podClient := clientset.CoreV1().Pods(apiv1.NamespaceDefault)
+
 	for {
-		podClient := clientset.CoreV1().Pods(apiv1.NamespaceDefault)
 		pods, err := podClient.List(context.Background(), metav1.ListOptions{})
 		if err != nil {
 			panic(err)
@@ -113,6 +114,7 @@ func main() {
 				break
 			}
 		}
+
 		<-tick
 	}
 }
