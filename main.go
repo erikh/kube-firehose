@@ -62,16 +62,10 @@ func main() {
 			_, ok := PodMap[pod.GetName()]
 			Lock.RUnlock()
 
-			if !ok {
+			if !ok && pod.Status.Phase == apiv1.PodRunning {
 				ctx, cancel := context.WithCancel(context.Background())
 				go func(pod apiv1.Pod, ctx context.Context) {
 					podName := pod.GetName()
-
-					if pod.Status.Phase != apiv1.PodRunning {
-						cancel()
-						deletePod(podName)
-						return
-					}
 
 					for _, container := range pod.Spec.Containers {
 						go func(cName string, podName string) {
