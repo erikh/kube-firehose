@@ -121,6 +121,9 @@ func main() {
 
 func deletePod(name string) {
 	Lock.Lock()
+	if cancel, ok := PodMap[name]; ok {
+		cancel()
+	}
 	delete(PodMap, name)
 	Lock.Unlock()
 }
