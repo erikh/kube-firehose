@@ -43,8 +43,6 @@ func main() {
 	epoch := metav1.NewTime(time.Unix(0, 0))
 
 	for {
-		<-tick
-
 		podClient := clientset.CoreV1().Pods(apiv1.NamespaceDefault)
 		pods, err := podClient.List(context.Background(), metav1.ListOptions{})
 		if err != nil {
@@ -97,6 +95,8 @@ func main() {
 			} else {
 				Lock.RUnlock()
 			}
+
+			<-tick
 		}
 	}
 }
