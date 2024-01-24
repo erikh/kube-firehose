@@ -46,9 +46,7 @@ func main() {
 	tick := time.Tick(time.Second)
 	logTime := metav1.NewTime(time.Unix(0, 0))
 
-	if *tail {
-		logTime = metav1.Now()
-	} else if *since != 0 {
+	if *tail || *since != 0 {
 		logTime = metav1.NewTime(time.Now().Add(-(*since)))
 	}
 
