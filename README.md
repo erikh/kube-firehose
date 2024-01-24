@@ -4,6 +4,8 @@ A very simple program to yield the stdout logs from all containers running in th
 
 You can also pass `-since` with a Golang duration to review items that occurred in that amount of time.
 
+Supply `-wait <duration>` to wait for that amount of time before terminating the program. Combine with `-since` to scope your logs in digestible sizes.
+
 Usage is simple: `kube-firehose`. If you have a configuration you want to use, specify `-kubeconfig`. It uses `~/.kube/config` by default.
 
 License is MIT, Erik Hollensbe <git@hollensbe.org> is the author.
