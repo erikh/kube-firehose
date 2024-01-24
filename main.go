@@ -23,6 +23,8 @@ var PodMap = map[string]context.CancelFunc{}
 
 func main() {
 	var kubeconfig *string
+	var tail *bool
+	tail = flag.Bool("t", false, "new contents only; no history")
 	if home := homedir.HomeDir(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
@@ -40,7 +42,11 @@ func main() {
 	}
 
 	tick := time.Tick(time.Second)
-	epoch := metav1.NewTime(time.Unix(0, 0))
+	logTime := metav1.NewTime(time.Unix(0, 0))
+
+	if *tail {
+		logTime = metav1.Now()
+	}
 
 	for {
 		podClient := clientset.CoreV1().Pods(apiv1.NamespaceDefault)
@@ -65,7 +71,7 @@ func main() {
 
 					for _, container := range pod.Spec.Containers {
 						go func(cName string, podName string) {
-							reader, err := podClient.GetLogs(podName, &apiv1.PodLogOptions{Container: cName, Follow: true, Timestamps: true, SinceTime: &epoch}).Stream(ctx)
+							reader, err := podClient.GetLogs(podName, &apiv1.PodLogOptions{Container: cName, Follow: true, Timestamps: true, SinceTime: &logTime}).Stream(ctx)
 							if err != nil {
 								cancel()
 								deletePod(podName)
