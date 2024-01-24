@@ -26,7 +26,7 @@ func main() {
 	var tail *bool
 	var since *time.Duration
 	tail = flag.Bool("t", false, "new contents only; no history")
-	since = flag.Duration("since", 0, "show this much time of history; incompatible with -t")
+	since = flag.Duration("since", 0, "show this much time of history")
 	if home := homedir.HomeDir(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
