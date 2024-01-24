@@ -26,13 +26,28 @@ func main() {
 	var tail *bool
 	var wait *time.Duration
 	var since *time.Duration
-	tail = flag.Bool("t", false, "new contents only; no history")
-	wait = flag.Duration("wait", 0, "if supplied, will exit the program after this much time")
-	since = flag.Duration("since", 0, "show this much time of history")
+	tail = flag.Bool(
+		"t", false, "new contents only; no history",
+	)
+
+	wait = flag.Duration(
+		"wait", 0, "if supplied, will exit the program after this much time",
+	)
+
+	since = flag.Duration(
+		"since", 0, "show this much time of history",
+	)
+
 	if home := homedir.HomeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+		kubeconfig = flag.String(
+			"kubeconfig",
+			filepath.Join(home, ".kube", "config"),
+			"(optional) absolute path to the kubeconfig file",
+		)
 	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		kubeconfig = flag.String(
+			"kubeconfig", "", "absolute path to the kubeconfig file",
+		)
 	}
 	flag.Parse()
 
@@ -73,11 +88,24 @@ func main() {
 
 					for _, container := range pod.Spec.Containers {
 						go func(cName string, podName string) {
-							reader, err := podClient.GetLogs(podName, &apiv1.PodLogOptions{Container: cName, Follow: true, Timestamps: true, SinceTime: &logTime}).Stream(ctx)
+							reader, err := podClient.
+								GetLogs(
+									podName,
+									&apiv1.PodLogOptions{
+										Container:  cName,
+										Follow:     true,
+										Timestamps: true,
+										SinceTime:  &logTime,
+									}).Stream(ctx)
 							if err != nil {
 								cancel()
 								deletePod(podName)
-								fmt.Fprintf(os.Stderr, "%s/%s yielded error trying to get logs: %v\n", podName, cName, err)
+								fmt.Fprintf(
+									os.Stderr,
+									"%s/%s yielded error trying to get logs: %v\n",
+									podName, cName, err,
+								)
+
 								return
 							}
 
