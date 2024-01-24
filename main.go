@@ -24,10 +24,10 @@ var PodMap = map[string]context.CancelFunc{}
 func main() {
 	var kubeconfig *string
 	var tail *bool
-	var noFollow *bool
+	var wait *time.Duration
 	var since *time.Duration
 	tail = flag.Bool("t", false, "new contents only; no history")
-	noFollow = flag.Bool("no-follow", false, "don't wait for more input; just spit out what you see and exit")
+	wait = flag.Duration("wait", 0, "if supplied, will exit the program after this much time")
 	since = flag.Duration("since", 0, "show this much time of history")
 	if home := homedir.HomeDir(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
@@ -46,6 +46,7 @@ func main() {
 	}
 
 	tick := time.Tick(time.Second)
+	start := time.Now()
 	logTime := metav1.NewTime(time.Unix(0, 0))
 
 	if *tail || *since != 0 {
@@ -101,14 +102,16 @@ func main() {
 			}
 		}
 
-		if *noFollow {
-			// Probably pointless, but it's probably better to be nice
-			Lock.Lock()
-			for _, cancel := range PodMap {
-				cancel()
+		if *wait != 0 {
+			if start.Add(*wait).After(time.Now()) {
+				// Probably pointless, but it's probably better to be nice
+				Lock.Lock()
+				for _, cancel := range PodMap {
+					cancel()
+				}
+				Lock.Unlock()
+				break
 			}
-			Lock.Unlock()
-			break
 		}
 		<-tick
 	}
